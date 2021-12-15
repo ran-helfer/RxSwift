@@ -49,13 +49,130 @@ class ViewController: UIViewController {
         test()
     }
 
+    func print1<T: CustomStringConvertible>(label: String, event: Event<T>) {
+      print(label, event.element ?? event.error ?? event)
+    }
     
     public func example(of description: String, action: () -> Void) {
-      print("\n--- Example of:", description, "---")
+        print("\n--- Example of:", description, "---")
         action()
     }
     
     func test() {
+        example(of: "ReplaySubject") {
+          // 1
+          let subject = ReplaySubject<String>.create(bufferSize: 2)
+          let disposeBag = DisposeBag()
+        // 2
+          subject.onNext("1") // Will never get emitted if the size is 2
+          subject.onNext("2")
+          subject.onNext("3")
+        // 3
+        subject.subscribe {
+            self.print1(label: "1)", event: $0)
+          }
+          .disposed(by: disposeBag)
+        
+        subject
+          .subscribe {
+              self.print1(label: "2)", event: $0)
+          }
+          .disposed(by: disposeBag)
+        
+        subject.onNext("4")
+        
+        subject.onError(MyError.anError)
+            
+        subject.dispose()
+            
+        subject
+              .subscribe {
+                  self.print1(label: "3)", event: $0)
+              }
+              .disposed(by: disposeBag)
+        
+        }
+        
+        
+    }
+    
+    func testBehaviorSubject() {
+        // 3
+        example(of: "BehaviorSubject") {
+            // 4
+            let subject = BehaviorSubject(value: "Initial value")
+            let disposeBag = DisposeBag()
+            
+            
+            subject
+                .subscribe {
+                    self.print1(label: "1)", event: $0)
+                }
+                .disposed(by: disposeBag)
+            
+            subject.onNext("X")
+            
+            // 1
+            subject.onError(MyError.anError)
+            
+            // 2
+            subject
+              .subscribe {
+                  self.print1(label: "2)", event: $0)
+              }
+              .disposed(by: disposeBag)
+            
+            subject.onNext("this won't be emittedd ")
+
+
+        }
+    }
+    
+    func testPublishSubject() {
+        example(of: "PublishSubject") {
+            
+            let subject = PublishSubject<String>()
+            subject.onNext("Is anyone listening?")
+            
+            let subscriptionOne = subject
+                .subscribe(onNext: { string in
+                    print(string)
+            })
+            
+            subject.on(.next("1"))
+            subject.onNext("2")
+            
+            
+            let subscriptionTwo = subject
+              .subscribe { event in
+                print("2)", event.element ?? event)
+            }
+            
+            subject.onNext("3")
+            
+            subscriptionOne.dispose()
+            
+            subject.onNext("4")
+            
+            // 1
+            subject.onCompleted()
+            // 2
+            subject.onNext("5")
+            // 3
+            subscriptionTwo.dispose()
+            let disposeBag = DisposeBag()
+            // 4
+            subject
+              .subscribe {
+                print("3)", $0.element ?? $0)
+              }
+              .disposed(by: disposeBag)
+            subject.onNext("?")
+        }
+    }
+    
+    /* Rather than creating an observable that waits around for subscribers, it’s possible to create observable factories that vend a new observable to each subscriber. */
+    func testDeferred() {
         example(of: "deferred") {
             let disposeBag = DisposeBag()
             // 1
@@ -71,6 +188,33 @@ class ViewController: UIViewController {
                     return Observable.of(4, 5, 6)
                 }
             }
+        }
+    }
+    
+    
+    /**The do operator allows you to insert side effects; that is, handlers to do things that will not change the emitted event in any way. do will just pass the event through to the next operator in the chain. do also includes an onSubscribe handler, something that subscribe does not. **/
+    func testDo() {
+        example(of: "DO Operator") {
+            let disposeBag = DisposeBag()
+
+            Observable<String>.create { observer in
+                return Disposables.create()
+            }.do { observable in
+
+            } onError: { error in
+
+            } onCompleted: {
+
+            } onSubscribe: {
+
+            } onSubscribed: {
+
+            } onDispose: {
+
+            }.subscribe(onNext: { observer in
+                
+            }).disposed(by: disposeBag)
+
         }
     }
     
