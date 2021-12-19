@@ -9,17 +9,22 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+
+struct Student {
+    var score: BehaviorSubject<Int>
+}
+
 enum MyError: Error {
-  case anError
+    case anError
 }
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var tapButton: UIButton!
     @IBOutlet weak var resetButton: UIButton!
     @IBOutlet weak var numberLabel: UILabel!
     fileprivate let disposeBag = DisposeBag()
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,9 +53,9 @@ class ViewController: UIViewController {
         
         test()
     }
-
+    
     func print1<T: CustomStringConvertible>(label: String, event: Event<T>) {
-      print(label, event.element ?? event.error ?? event)
+        print(label, event.element ?? event.error ?? event)
     }
     
     public func example(of description: String, action: () -> Void) {
@@ -60,6 +65,164 @@ class ViewController: UIViewController {
     
     func test() {
         
+    }
+    
+    func test_materialize_dematerialize() {
+        example(of: "materialize and dematerialize") {
+            // 1
+            enum MyError: Error {
+                case anError
+            }
+            let disposeBag = DisposeBag()
+            // 2
+            let ryan = Student(score: BehaviorSubject(value: 80))
+            let charlotte = Student(score: BehaviorSubject(value: 100))
+            let student = BehaviorSubject(value: ryan)
+            
+            // 1
+            let studentScore = student
+                .flatMapLatest {
+                    $0.score.materialize()
+                }
+            // 2
+            studentScore
+                .filter {
+                    /* Without this filter charolote score won't be printed */
+                    guard $0.error == nil else {
+                        print($0.error!)
+                        return false
+                    }
+                    return true
+                }
+                .dematerialize()
+                .subscribe(onNext: {
+                    print($0)
+                })
+                .disposed(by: disposeBag)
+            
+            // 3
+            ryan.score.onNext(85)
+            ryan.score.onError(MyError.anError)
+            ryan.score.onNext(90)
+            // 4
+            student.onNext(charlotte)
+        }
+        
+        
+    }
+    
+    func testFlatMap() {
+        example(of: "flatMap") {
+            let disposeBag = DisposeBag()
+            // 1
+            let ryan = Student(score: BehaviorSubject(value: 80))
+            let charlotte = Student(score: BehaviorSubject(value: 100))
+            // 2
+            let student = PublishSubject<Student>()
+            // 3
+            student
+                .flatMap {
+                    $0.score }
+            // 4
+                .subscribe(onNext: {
+                    print($0)
+                })
+                .disposed(by: disposeBag)
+            
+            student.onNext(ryan)
+            ryan.score.onNext(85)
+            ryan.score.onNext(90)
+            
+            student.onNext(charlotte)
+
+        }
+    }
+    
+    func testEnumeratedAndMap() {
+        example(of: "enumerated and map") {
+            let disposeBag = DisposeBag()
+            // 1
+            Observable.of(1, 2, 3, 4, 5, 6)
+            // 2
+                .enumerated()
+            // 3
+                .map { index, integer in
+                    index > 2 ? integer * 2 : integer
+                }
+            // 4
+                .subscribe(onNext: {
+                    print($0)
+                })
+                .disposed(by: disposeBag)
+        }
+    }
+    
+    
+    func testMapTransformer() {
+        example(of: "MapTransformer") {
+            let disposeBag = DisposeBag()
+            // 1
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .spellOut
+            // 2
+            Observable<NSNumber>.of(123, 4, 56)
+            // 3
+                .map {
+                    formatter.string(from: $0) ?? ""
+                }
+                .subscribe(onNext: {
+                    print($0)
+                })
+                .disposed(by: disposeBag)
+        }
+    }
+    func testToArray() {
+        
+        
+        example(of: "toArray") {
+            let disposeBag = DisposeBag()
+            // 1
+            Observable.of("A", "B", "C")
+            // 2
+                .toArray()
+                .subscribe(onNext: {
+                    print($0) }
+                )
+                .disposed(by: disposeBag)
+        }
+        
+        //        example(of: "toArray") {
+        //            let disposeBag = DisposeBag()
+        //            // 1
+        //            let subject = PublishSubject<String>()
+        //
+        //            subject.onNext("here")
+        //            sleep(1)
+        //            subject.onNext("here1")
+        //            sleep(1)
+        //            subject.onNext("here2")
+        //            sleep(1)
+        //            subject.onNext("here3")
+        //            sleep(1)
+        //
+        //            Observable.of(subject)
+        //            // 2
+        //                //.toArray()
+        //                .subscribe(onNext: {
+        //                    print("next")
+        //
+        //                    print($0)
+        //
+        //                }, onCompleted: {
+        //                    print("completed")
+        //                })
+        //                .disposed(by: disposeBag)
+        //
+        //
+        //
+        //            subject.onCompleted()
+        //
+        //        }
         
     }
     
@@ -108,7 +271,7 @@ class ViewController: UIViewController {
                 .disposed(by: disposeBag)
         }
         /**
-
+         
          Like skipUntil, there's also a takeUntil operator, shown in this marble diagram, taking from the source observable until the trigger observable emits an element.
          Add this new example, which is just like the skipUntil example you created earlier:
          --- Example of: takeWhile ---
@@ -159,7 +322,7 @@ class ViewController: UIViewController {
             trigger.onNext("X")
             
             subject.onNext("now it will print ")
-
+            
         }
     }
     
@@ -181,7 +344,7 @@ class ViewController: UIViewController {
          3
          4
          4
-
+         
          
          */
     }
@@ -255,37 +418,37 @@ class ViewController: UIViewController {
     
     func testReplaySubject() {
         example(of: "ReplaySubject") {
-          // 1
-          let subject = ReplaySubject<String>.create(bufferSize: 2)
-          let disposeBag = DisposeBag()
-        // 2
-          subject.onNext("1") // Will never get emitted if the size is 2
-          subject.onNext("2")
-          subject.onNext("3")
-        // 3
-        subject.subscribe {
-            self.print1(label: "1)", event: $0)
-          }
-          .disposed(by: disposeBag)
-        
-        subject
-          .subscribe {
-              self.print1(label: "2)", event: $0)
-          }
-          .disposed(by: disposeBag)
-        
-        subject.onNext("4")
-        
-        subject.onError(MyError.anError)
+            // 1
+            let subject = ReplaySubject<String>.create(bufferSize: 2)
+            let disposeBag = DisposeBag()
+            // 2
+            subject.onNext("1") // Will never get emitted if the size is 2
+            subject.onNext("2")
+            subject.onNext("3")
+            // 3
+            subject.subscribe {
+                self.print1(label: "1)", event: $0)
+            }
+            .disposed(by: disposeBag)
             
-        subject.dispose()
+            subject
+                .subscribe {
+                    self.print1(label: "2)", event: $0)
+                }
+                .disposed(by: disposeBag)
             
-        subject
-              .subscribe {
-                  self.print1(label: "3)", event: $0)
-              }
-              .disposed(by: disposeBag)
-        
+            subject.onNext("4")
+            
+            subject.onError(MyError.anError)
+            
+            subject.dispose()
+            
+            subject
+                .subscribe {
+                    self.print1(label: "3)", event: $0)
+                }
+                .disposed(by: disposeBag)
+            
         }
         
         
@@ -312,14 +475,14 @@ class ViewController: UIViewController {
             
             // 2
             subject
-              .subscribe {
-                  self.print1(label: "2)", event: $0)
-              }
-              .disposed(by: disposeBag)
+                .subscribe {
+                    self.print1(label: "2)", event: $0)
+                }
+                .disposed(by: disposeBag)
             
             subject.onNext("this won't be emittedd ")
-
-
+            
+            
         }
     }
     
@@ -332,16 +495,16 @@ class ViewController: UIViewController {
             let subscriptionOne = subject
                 .subscribe(onNext: { string in
                     print(string)
-            })
+                })
             
             subject.on(.next("1"))
             subject.onNext("2")
             
             
             let subscriptionTwo = subject
-              .subscribe { event in
-                print("2)", event.element ?? event)
-            }
+                .subscribe { event in
+                    print("2)", event.element ?? event)
+                }
             
             subject.onNext("3")
             
@@ -358,10 +521,10 @@ class ViewController: UIViewController {
             let disposeBag = DisposeBag()
             // 4
             subject
-              .subscribe {
-                print("3)", $0.element ?? $0)
-              }
-              .disposed(by: disposeBag)
+                .subscribe {
+                    print("3)", $0.element ?? $0)
+                }
+                .disposed(by: disposeBag)
             subject.onNext("?")
         }
     }
@@ -391,25 +554,25 @@ class ViewController: UIViewController {
     func testDo() {
         example(of: "DO Operator") {
             let disposeBag = DisposeBag()
-
+            
             Observable<String>.create { observer in
                 return Disposables.create()
             }.do { observable in
-
+                
             } onError: { error in
-
+                
             } onCompleted: {
-
+                
             } onSubscribe: {
-
+                
             } onSubscribed: {
-
+                
             } onDispose: {
-
+                
             }.subscribe(onNext: { observer in
                 
             }).disposed(by: disposeBag)
-
+            
         }
     }
     
@@ -434,8 +597,8 @@ class ViewController: UIViewController {
                 onError: { print($0) },
                 onCompleted: { print("Completed") },
                 onDisposed: { print("Disposed") }
-              )
-              .disposed(by: disposeBag)
+            )
+                .disposed(by: disposeBag)
         }
     }
     
@@ -459,10 +622,10 @@ class ViewController: UIViewController {
             // The from operator creates an observable of individual type instances from a regular array of elements
             let observable4 = Observable.from([one, two, three])
         }
-
+        
         /**
-            Ran h
-            To my best understanding the developer can subscribe to any sequence and get the event or object inside the event closure
+         Ran h
+         To my best understanding the developer can subscribe to any sequence and get the event or object inside the event closure
          
          */
         
@@ -474,34 +637,34 @@ class ViewController: UIViewController {
             observable.subscribe { event in
                 sleep(1)
                 //print(event.element)  /* usually we want the element */
-               // print(event.isCompleted)
+                // print(event.isCompleted)
                 //print(event.error)
                 // Event is next
                 
                 if let element = event.element {
                     print("with event --- + \(element)")
-                  }
+                }
             }.disposed(by: disposeBag)
             
             /* Ignoring the event and getting the element */
             observable.subscribe(onNext: { element in
                 sleep(1)
-              print(element)
+                print(element)
             }).disposed(by: disposeBag)
         }
         
         
         example(of: "empty") {
-          let observable = Observable<Void>.empty()
+            let observable = Observable<Void>.empty()
             observable.subscribe(
-            // 1
+                // 1
                 onNext: { element in
-                  print(element)
-            },
-            // 2
+                    print(element)
+                },
+                // 2
                 onCompleted: {
-                  print("Completed")
-            }).disposed(by: disposeBag)
+                    print("Completed")
+                }).disposed(by: disposeBag)
         }
         
         
@@ -526,6 +689,6 @@ class ViewController: UIViewController {
             print(n)
         }
     }
-
+    
 }
 
