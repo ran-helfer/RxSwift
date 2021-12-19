@@ -59,6 +59,201 @@ class ViewController: UIViewController {
     }
     
     func test() {
+        
+        
+    }
+    
+    func testtakeUntil() {
+        example(of: "takeUntil") {
+            let disposeBag = DisposeBag()
+            // 1
+            let subject = PublishSubject<String>()
+            let trigger = PublishSubject<String>()
+            // 2
+            subject.takeUntil(trigger)
+                .subscribe(onNext: {
+                    print($0)
+                })
+                .disposed(by: disposeBag)
+            // 3
+            subject.onNext("1")
+            subject.onNext("2")
+            
+            trigger.onNext("X")
+            subject.onNext("3")
+        }
+        /**
+         The X stops the taking, so 3 is not allowed through and nothing more is printed.
+         */
+    }
+    
+    func testTakeWhile() {
+        example(of: "takeWhile") {
+            let disposeBag = DisposeBag()
+            // 1
+            Observable.of(2, 2, 4, 4, 6, 6)
+            // 2
+                .enumerated()
+            // 3
+                .takeWhile { index, integer in
+                    // 4
+                    integer % 2 == 0 && index < 3
+                }
+            // 5
+                .map { $0.element }
+            // 6
+                .subscribe(onNext: {
+                    print($0)
+                })
+                .disposed(by: disposeBag)
+        }
+        /**
+
+         Like skipUntil, there's also a takeUntil operator, shown in this marble diagram, taking from the source observable until the trigger observable emits an element.
+         Add this new example, which is just like the skipUntil example you created earlier:
+         --- Example of: takeWhile ---
+         2
+         2
+         4
+         */
+    }
+    
+    func testTake() {
+        example(of: "take") {
+            let disposeBag = DisposeBag()
+            // 1
+            Observable.of(1, 2, 3, 4, 5, 6)
+            // 2
+                .take(3)
+                .subscribe(onNext: {
+                    print($0)
+                })
+                .disposed(by: disposeBag)
+        }
+        /**
+         
+         --- Example of: take ---
+         1
+         2
+         3
+         */
+    }
+    
+    func testskipUntil() {
+        example(of: "skipUntil") {
+            let disposeBag = DisposeBag()
+            // 1
+            let subject = PublishSubject<String>()
+            let trigger = PublishSubject<String>()
+            // 2
+            subject
+                .skipUntil(trigger)
+                .subscribe(onNext: {
+                    print($0)
+                })
+                .disposed(by: disposeBag)
+            
+            subject.onNext("A")
+            subject.onNext("B")
+            
+            trigger.onNext("X")
+            
+            subject.onNext("now it will print ")
+
+        }
+    }
+    
+    func testskipWhile() {
+        example(of: "skipWhile") {
+            let disposeBag = DisposeBag()
+            // 1
+            Observable.of(2, 2, 3, 4, 4)
+            // 2
+                .skipWhile { integer in
+                    integer % 2 == 0
+                }
+                .subscribe(onNext: {
+                    print($0)
+                }).disposed(by: disposeBag)
+        }
+        /**
+         --- Example of: skipWhile ---
+         3
+         4
+         4
+
+         
+         */
+    }
+    
+    func testSkip() {
+        example(of: "skip") {
+            let disposeBag = DisposeBag()
+            // 1
+            Observable.of("A", "B", "C", "D", "E", "F")
+            // 2
+                .skip(3)
+                .subscribe(onNext: {
+                    print($0) })
+                .disposed(by: disposeBag)
+        }
+    }
+    
+    func testFilter() {
+        example(of: "filter") {
+            let disposeBag = DisposeBag()
+            // 1
+            Observable.of(1, 2, 3, 4, 5, 6)
+            // 2
+                .filter { integer in
+                    integer % 2 == 0
+                }
+            // 3
+                .subscribe(onNext: {
+                    print($0)
+                })
+                .disposed(by: disposeBag)
+        }
+    }
+    
+    func testElementAt() {
+        example(of: "elementAt") {
+            // 1
+            let strikes = PublishSubject<String>()
+            let disposeBag = DisposeBag()
+            // 2
+            strikes
+                .elementAt(2)
+                .subscribe(onNext: { element in
+                    print("You're out! \(element)")
+                })
+                .disposed(by: disposeBag)
+            
+            strikes.onNext("X")
+            strikes.onNext("Y")
+            strikes.onNext("Z")
+            strikes.onNext("dfgdfg")
+        }
+    }
+    
+    func testIgnoreElements() {
+        example(of: "ignoreElements") {
+            // 1
+            let strikes = PublishSubject<String>()
+            let disposeBag = DisposeBag()
+            // 2
+            strikes
+                .ignoreElements()
+                .subscribe { _ in
+                    print("You're out!")
+                }
+                .disposed(by: disposeBag)
+            
+            strikes.onCompleted()
+        }
+    }
+    
+    func testReplaySubject() {
         example(of: "ReplaySubject") {
           // 1
           let subject = ReplaySubject<String>.create(bufferSize: 2)
@@ -278,7 +473,7 @@ class ViewController: UIViewController {
             let observable = Observable.of(one, two, three)
             observable.subscribe { event in
                 sleep(1)
-                //print(event.element)
+                //print(event.element)  /* usually we want the element */
                // print(event.isCompleted)
                 //print(event.error)
                 // Event is next
