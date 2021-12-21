@@ -64,7 +64,201 @@ class ViewController: UIViewController {
     }
     
     func test() {
+        /**
+         
+         */
+        example(of: "switchLatest From source") {
+            // 1
+            let one = PublishSubject<String>()
+            let two = PublishSubject<String>()
+            let three = PublishSubject<String>()
+            let source = PublishSubject<Observable<String>>()
+            
+            // 2
+            let observable = source.switchLatest()
+            let disposable = observable.subscribe(onNext: { value in
+                print(value)
+            })
+            // 3
+            source.onNext(one)
+            one.onNext("Some text from sequence one")
+            two.onNext("Some text from sequence two - this ignored")
+            
+            source.onNext(two)
+            two.onNext("More text from sequence two")
+            one.onNext("and also from sequence one - this ignored")
+            
+            source.onNext(three)
+            two.onNext("Why don't you see me?")
+            one.onNext("I'm alone, help me")
+            three.onNext("Hey it's three. I win.")
+            
+            source.onNext(one)
+            one.onNext("Nope. It's me, one!")
+            
+            
+            disposable.dispose()
+        }
+    }
+    
+    func test_amb() {
+        /**
+         The amb(_:) operator subscribes to left and right observables. It waits for any of them to emit an element, then unsubscribes from the other one. After that, it only relays elements from the first active observable. It really does draw its name from the term ambiguous: at first, you don’t know which sequence you’re interested in, and want to decide only when one fires.
+         This operator is often overlooked. It has a few select practical applications, like connecting to redundant servers and sticking with the one that responds first.
+         */
         
+        example(of: "amb") {
+            let left = PublishSubject<String>()
+            let right = PublishSubject<String>()
+            // 1
+            let observable = left.amb(right)
+            let disposable = observable.subscribe(onNext: { value in
+                print(value)
+            })
+            // 2
+            left.onNext("Lisbon")
+            right.onNext("Copenhagen")
+            left.onNext("London")
+            left.onNext("Madrid")
+            right.onNext("Vienna")
+            disposable.dispose()
+        }
+    }
+    
+    func test_withSample() {
+        /*
+         It does nearly the same thing as withLatestFrom with just one variation: each time the trigger observable emits a value, sample(_:) emits the latest value from the “other” observable, but only if it arrived since the last “tick”. If no new data arrived, sample(_:) won’t emit anything. If data is the same - no new emitted event
+         
+         Note: Don’t forget that withLatestFrom(_:) takes the data observable as a parameter, while sample(_:) takes the trigger observable as a parameter. This can easily be a source of mistakes — so be careful!
+         */
+        example(of: "withSample") {
+            // 1
+            let button = PublishSubject<Void>()
+            let textField = PublishSubject<String>()
+            // 2
+            /* button is the trigger for sampling */
+            let observable = textField.sample(button)
+            _ = observable.subscribe(onNext: { value in
+                print(value)
+            })
+            // 3
+            textField.onNext("Par")
+            textField.onNext("Pari")
+            textField.onNext("Paris")
+            button.onNext(())
+            button.onNext(())
+            button.onNext(())
+            textField.onNext("Paris diff")
+            button.onNext(())
+            button.onNext(())
+        }
+    }
+    
+    func testWithLatestFrom() {
+        /*
+         Simple and straightforward! withLatestFrom(_:) is useful in all situations where you want the current (latest) value emitted from an observable, but only when a particular trigger occurs.
+         */
+
+        example(of: "withLatestFrom") {
+          // 1
+          let button = PublishSubject<Void>()
+          let textField = PublishSubject<String>()
+        // 2
+          let observable = button.withLatestFrom(textField)
+          _ = observable.subscribe(onNext: { value in
+            print(value)
+          })
+        // 3
+          textField.onNext("Par")
+          textField.onNext("Pari")
+          textField.onNext("Paris")
+          button.onNext(())
+          button.onNext(())
+        }
+    }
+    
+    func testZip() {
+        /**
+         Did you notice how Vienna didn’t show up in the output? Why is that?
+         
+         The explanation lies in the way zip operators work. They wait until each of the inner observables emits a new value. If one of them completes, zip completes as well. It doesn’t wait until all of the inner observables are done! This is called indexed sequencing, which is a way to walk though sequences in lockstep.*
+         */
+        
+        example(of: "zip") {
+          enum Weather {
+            case cloudy
+            case sunny
+          }
+            let left: Observable<Weather> = Observable.of(.sunny, .cloudy, .cloudy,
+          .sunny)
+            let right = Observable.of("Lisbon", "Copenhagen", "London", "Madrid",
+          "Vienna")
+            let observable = Observable.zip(left, right) { weather, city in
+               return "It's \(weather) in \(city)"
+             }
+             observable.subscribe(onNext: { value in
+               print(value)
+           })
+            
+        }
+    }
+    
+    func testStartWith() {
+        
+        //Create a sequence starting with the value 1, then continue with the original sequence of numbers.
+        example(of: "startWith") {
+          // 1
+          let numbers = Observable.of(2, 3, 4)
+        // 2
+          let observable = numbers.startWith(1)
+          observable.subscribe(onNext: { value in
+            print(value)
+          })
+        }
+    }
+    
+    func testCombineLatest() {
+        example(of: "combineLatest") {
+          let left = PublishSubject<String>()
+            let right = PublishSubject<String>()
+            // 1
+              let observable = Observable.combineLatest(left, right, resultSelector:
+            {
+                lastLeft, lastRight in
+                "\(lastLeft) \(lastRight)"
+              })
+              let disposable = observable.subscribe(onNext: { value in
+                print(value)
+              })
+            // 2
+            print("> Sending a value to Left")
+            left.onNext("Hello,")
+            print("> Sending a value to Right")
+            right.onNext("world")
+            print("> Sending another value to Right")
+            right.onNext("RxSwift")
+            print("> Sending another value to Left")
+            left.onNext("Have a good day,")
+            
+            disposable.dispose()
+         }
+            
+            
+    }
+    
+    func testMapOperator() {
+        let urlString = ["Some_string_url"]
+        
+        let urlRequest:[URLRequest] =
+            urlString.map { urlString -> URL in
+                let string = "https://api.github.com/repos/\(urlString)/events"
+                if let url = URL(string: string) {
+                    return url
+                }
+                return URL(fileURLWithPath: "")
+            }.map { url -> URLRequest in
+                return URLRequest(url: url)
+            }
     }
     
     func test_materialize_dematerialize() {
