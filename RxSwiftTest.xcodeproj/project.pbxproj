@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		17AC033325752AD9CEC9A428 /* Pods_RxSwiftTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58590DCA2C66B6AF8197AFD8 /* Pods_RxSwiftTest.framework */; };
+		802305052779C34A00D10C1A /* WheatherAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 802305042779C34A00D10C1A /* WheatherAPI.swift */; };
+		802305072779C42F00D10C1A /* Wheather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 802305062779C42F00D10C1A /* Wheather.swift */; };
+		802305092779D32400D10C1A /* tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 802305082779D32400D10C1A /* tests.swift */; };
 		806C081027663E2D00FA33B9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806C080F27663E2D00FA33B9 /* AppDelegate.swift */; };
 		806C081227663E2D00FA33B9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806C081127663E2D00FA33B9 /* SceneDelegate.swift */; };
 		806C081427663E2D00FA33B9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 806C081327663E2D00FA33B9 /* ViewController.swift */; };
@@ -18,6 +21,9 @@
 
 /* Begin PBXFileReference section */
 		58590DCA2C66B6AF8197AFD8 /* Pods_RxSwiftTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RxSwiftTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		802305042779C34A00D10C1A /* WheatherAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WheatherAPI.swift; sourceTree = "<group>"; };
+		802305062779C42F00D10C1A /* Wheather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wheather.swift; sourceTree = "<group>"; };
+		802305082779D32400D10C1A /* tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tests.swift; sourceTree = "<group>"; };
 		806C080C27663E2D00FA33B9 /* RxSwiftTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RxSwiftTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		806C080F27663E2D00FA33B9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		806C081127663E2D00FA33B9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -72,9 +78,12 @@
 		806C080E27663E2D00FA33B9 /* RxSwiftTest */ = {
 			isa = PBXGroup;
 			children = (
+				802305082779D32400D10C1A /* tests.swift */,
 				806C080F27663E2D00FA33B9 /* AppDelegate.swift */,
 				806C081127663E2D00FA33B9 /* SceneDelegate.swift */,
 				806C081327663E2D00FA33B9 /* ViewController.swift */,
+				802305042779C34A00D10C1A /* WheatherAPI.swift */,
+				802305062779C42F00D10C1A /* Wheather.swift */,
 				806C081527663E2D00FA33B9 /* Main.storyboard */,
 				806C081827663E3100FA33B9 /* Assets.xcassets */,
 				806C081A27663E3100FA33B9 /* LaunchScreen.storyboard */,
@@ -206,8 +215,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				802305072779C42F00D10C1A /* Wheather.swift in Sources */,
+				802305092779D32400D10C1A /* tests.swift in Sources */,
 				806C081427663E2D00FA33B9 /* ViewController.swift in Sources */,
 				806C081027663E2D00FA33B9 /* AppDelegate.swift in Sources */,
+				802305052779C34A00D10C1A /* WheatherAPI.swift in Sources */,
 				806C081227663E2D00FA33B9 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

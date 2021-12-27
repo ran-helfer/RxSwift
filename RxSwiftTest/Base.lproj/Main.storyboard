@@ -16,38 +16,51 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="33U-aU-EWZ">
-                                <rect key="frame" x="186" y="121" width="42" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="City Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="33U-aU-EWZ">
+                                <rect key="frame" x="167" y="121" width="80" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
+                                <color key="textColor" systemColor="systemPinkColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3rM-HT-1NZ">
-                                <rect key="frame" x="198" y="269" width="18" height="22"/>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="plus" catalog="system"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="V9Y-Rk-hHD">
-                                <rect key="frame" x="199" y="394" width="16" height="22"/>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="restart" catalog="system"/>
-                            </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Sjf-vc-YK7">
+                                <rect key="frame" x="107" y="254" width="200" height="200"/>
+                                <color key="backgroundColor" systemColor="systemGray3Color"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="1Om-O6-NtR"/>
+                                    <constraint firstAttribute="height" constant="200" id="MCo-OZ-4w9"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Temprature" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XpR-OD-OcF">
+                                <rect key="frame" x="163" y="501" width="88" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="systemPinkColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Humidity" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jrD-Ne-eg5">
+                                <rect key="frame" x="172.5" y="601" width="69" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" systemColor="systemRedColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="3rM-HT-1NZ" firstAttribute="top" secondItem="33U-aU-EWZ" secondAttribute="bottom" constant="127" id="0Vf-T4-1O0"/>
-                            <constraint firstItem="V9Y-Rk-hHD" firstAttribute="top" secondItem="3rM-HT-1NZ" secondAttribute="bottom" constant="103" id="2pb-oL-4wa"/>
-                            <constraint firstItem="V9Y-Rk-hHD" firstAttribute="centerX" secondItem="3rM-HT-1NZ" secondAttribute="centerX" id="UuO-Xi-8VL"/>
-                            <constraint firstItem="3rM-HT-1NZ" firstAttribute="centerX" secondItem="33U-aU-EWZ" secondAttribute="centerX" id="bzt-hS-xeo"/>
+                            <constraint firstItem="XpR-OD-OcF" firstAttribute="top" secondItem="Sjf-vc-YK7" secondAttribute="bottom" constant="47" id="140-zd-fSM"/>
+                            <constraint firstItem="Sjf-vc-YK7" firstAttribute="top" secondItem="33U-aU-EWZ" secondAttribute="bottom" constant="112" id="XcV-bh-wQm"/>
+                            <constraint firstItem="jrD-Ne-eg5" firstAttribute="top" secondItem="XpR-OD-OcF" secondAttribute="bottom" constant="79" id="YZF-tS-xHH"/>
                             <constraint firstItem="33U-aU-EWZ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="77" id="ecw-ES-VWv"/>
                             <constraint firstItem="33U-aU-EWZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jbt-MK-CWm"/>
+                            <constraint firstItem="Sjf-vc-YK7" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="lim-Tj-O6d"/>
+                            <constraint firstItem="jrD-Ne-eg5" firstAttribute="centerX" secondItem="XpR-OD-OcF" secondAttribute="centerX" id="oSP-Dd-IRE"/>
+                            <constraint firstItem="XpR-OD-OcF" firstAttribute="centerX" secondItem="Sjf-vc-YK7" secondAttribute="centerX" id="uUi-tP-Mzp"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="numberLabel" destination="33U-aU-EWZ" id="TU4-5A-leh"/>
-                        <outlet property="resetButton" destination="V9Y-Rk-hHD" id="62d-a0-fbg"/>
-                        <outlet property="tapButton" destination="3rM-HT-1NZ" id="oBb-MG-SKT"/>
+                        <outlet property="cityName" destination="33U-aU-EWZ" id="Wa5-Jo-Jgo"/>
+                        <outlet property="humidityLabel" destination="jrD-Ne-eg5" id="DmW-5s-k5d"/>
+                        <outlet property="imageView" destination="Sjf-vc-YK7" id="vjj-tB-1WZ"/>
+                        <outlet property="tempratureLabel" destination="XpR-OD-OcF" id="Y6V-c8-eb3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -56,10 +69,17 @@
         </scene>
     </scenes>
     <resources>
-        <image name="plus" catalog="system" width="128" height="113"/>
-        <image name="restart" catalog="system" width="120" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray3Color">
+            <color red="0.7803921568627451" green="0.7803921568627451" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemPinkColor">
+            <color red="1" green="0.17647058823529413" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
