@@ -30,7 +30,7 @@ class ViewController: UIViewController {
     
     private func setUpView(weather: Weather) {
         self.humidityLabel.text = String(weather.main.humidity)
-        self.tempratureLabel.text = String(weather.main.temp)
+        self.tempratureLabel.text = String(round(((weather.main.temp-273.15) * 100) / 100))
         self.cityName.text = String(weather.name)
         
         ApiController.shared.imageForIconId(iconUrlString: weather.weather.first?.iconUrl ?? "")
