@@ -17,8 +17,8 @@ class ApiController {
     func observableRequestForModel<T: Decodable>(request: URLRequest, emptyType: T) -> Observable<T> {
         return URLSession.shared.rx.data(request: request).map({ data in
             do {
-                let weather = try JSONDecoder().decode(T.self, from: data)
-                return weather
+                let model = try JSONDecoder().decode(T.self, from: data)
+                return model
             } catch let error {
                 return emptyType
             }
