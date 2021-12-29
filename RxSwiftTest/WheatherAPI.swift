@@ -8,22 +8,44 @@
 import Foundation
 import RxSwift
 
+enum DecodableError: Error {
+    case decodingError
+}
+
+struct ErrorWhileDecoding: Decodable {
+    let error: Error
+    
+    enum CodingKeys: String, CodingKey {
+            case error = "error"
+    }
+    
+    init(error: Error) {
+        self.error = error
+    }
+    
+    init(from decoder: Decoder) throws {
+        self.error = DecodableError.decodingError
+    }
+}
+
+extension Decodable {
+    static func observableRequestForModel(request: URLRequest) -> Observable<Decodable> {
+        return URLSession.shared.rx.data(request: request).map({ data in
+            do {
+                let model = try JSONDecoder().decode(Self.self, from: data)
+                return model
+            } catch let error {
+                return ErrorWhileDecoding(error: error)
+            }
+        })
+    }
+}
+
 class ApiController {
     
     static let shared = ApiController.init()
     let apiKey = "ce9c6247ec5b529de72e47123fb3a403"
     let baseUrlSting = "http://api.openweathermap.org/data/2.5/weather"
-    
-    func observableRequestForModel<T: Decodable>(request: URLRequest, emptyType: T) -> Observable<T> {
-        return URLSession.shared.rx.data(request: request).map({ data in
-            do {
-                let model = try JSONDecoder().decode(T.self, from: data)
-                return model
-            } catch let error {
-                return emptyType
-            }
-        })
-    }
     
     func currentWeather(city: String) -> Observable<Weather> {
         var components = URLComponents(string:baseUrlSting)
@@ -35,8 +57,11 @@ class ApiController {
         request.httpMethod = "GET"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        return observableRequestForModel(request: request, emptyType: Weather.someWeather()).map({ model in
-            return model
+        return Weather.observableRequestForModel(request: request).map({ model in
+            if let _ = model as? ErrorWhileDecoding {
+                return Weather.someWeather()
+            }
+            return model as! Weather
         })
     }
     
