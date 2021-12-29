@@ -10,39 +10,35 @@ import RxSwift
 import RxCocoa
 
 class ViewController: UIViewController {
-
-    @IBOutlet weak var tapButton: UIButton!
-    @IBOutlet weak var resetButton: UIButton!
-    @IBOutlet weak var numberLabel: UILabel!
+    
+    @IBOutlet weak var cityName: UILabel!
     fileprivate let disposeBag = DisposeBag()
-
+    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var humidityLabel: UILabel!
+    @IBOutlet weak var tempratureLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        numberLabel.text = "0"
+        ApiController.shared.currentWeather(city: "HAIFA")
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] weather in
+                self?.setUpView(weather: weather)
+            }).disposed(by: disposeBag)
         
-        tapButton.rx.tap.subscribe({ [weak self] _ in
-            guard let this = self else {
-                return
-            }
-            guard let text = this.numberLabel.text else {
-                return
-            }
-            guard let number = Int(text) else {
-                return
-            }
-            this.numberLabel.text = String(number+1)
-        }).disposed(by: disposeBag)
-        
-        resetButton.rx.tap.subscribe({ [weak self] _ in
-            guard let this = self else {
-                return
-            }
-            this.numberLabel.text = "0"
-        }).disposed(by: disposeBag)
     }
+    
+    private func setUpView(weather: Weather) {
+        self.humidityLabel.text = String(weather.main.humidity)
+        self.tempratureLabel.text = String(round(((weather.main.temp-273.15) * 100) / 100))
+        self.cityName.text = String(weather.name)
+        
+        ApiController.shared.imageForIconId(iconUrlString: weather.weather.first?.iconUrl ?? "")
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] image in
+                self?.imageView.image = image
+            }).disposed(by: disposeBag)
 
-
+    }
 }
 
