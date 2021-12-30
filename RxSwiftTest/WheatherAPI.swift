@@ -15,10 +15,6 @@ enum DecodableError: Error {
 struct ErrorWhileDecoding: Decodable {
     let error: Error
     
-    enum CodingKeys: String, CodingKey {
-            case error = "error"
-    }
-    
     init(error: Error) {
         self.error = error
     }
