@@ -17,15 +17,21 @@ class ViewController: UIViewController {
     @IBOutlet weak var humidityLabel: UILabel!
     @IBOutlet weak var tempratureLabel: UILabel!
     @IBOutlet weak var cityNameTextField: UITextField!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        ApiController.shared.currentWeather(city: "HAIFA")
-//            .observeOn(MainScheduler.instance)
-//            .subscribe(onNext: { [weak self] weather in
-//                self?.setUpView(weather: weather)
-//            }).disposed(by: disposeBag)
+        activityIndicator.isHidden = true
+
+        cityNameTextField.layer.borderColor = UIColor.blue.cgColor
+        cityNameTextField.layer.borderWidth = 1
+
+        ApiController.shared.currentWeather(city: "paris")
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] weather in
+                self?.setUpView(weather: weather)
+            }).disposed(by: disposeBag)
         
         let search = cityNameTextField.rx.text
           .filter { ($0 ?? "").count > 0 }
@@ -37,7 +43,13 @@ class ViewController: UIViewController {
           .observeOn(MainScheduler.instance)
           .throttle(0.5, scheduler: MainScheduler.instance)
          
-          
+        
+        cityNameTextField.rx.controlEvent(.editingChanged).asObservable().subscribe { [weak self] value in
+            self?.activityIndicator.startAnimating()
+            self?.activityIndicator.isHidden = false
+        }.disposed(by: disposeBag)
+
+
 //        search.map { "\(round((($0.main.temp-273.15) * 100) / 100))° C" }
 //          .bind(to: tempratureLabel.rx.text)
 //          .disposed(by: disposeBag)
@@ -60,10 +72,12 @@ class ViewController: UIViewController {
     }
     
     private func setUpView(weather: Weather) {
-        self.humidityLabel.text = String(weather.main.humidity)
-        self.tempratureLabel.text = String(round(((weather.main.temp-273.15) * 100) / 100))
-        self.cityName.text = String(weather.name)
-        
+        humidityLabel.text = String(weather.main.humidity)
+        tempratureLabel.text = String(round(((weather.main.temp-273.15) * 100) / 100))
+        cityName.text = String(weather.name)
+        activityIndicator.stopAnimating()
+        activityIndicator.isHidden = true
+
         guard let firstWeather = weather.weather.first,
                 firstWeather.icon.count > 0 else {
             imageView.image = nil

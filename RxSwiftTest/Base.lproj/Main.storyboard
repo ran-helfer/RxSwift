@@ -47,6 +47,9 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="2hW-EQ-yL7">
+                                <rect key="frame" x="197" y="161" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -55,8 +58,10 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="0F3-BT-z3E" secondAttribute="trailing" constant="16" id="4Q8-ak-Vrd"/>
                             <constraint firstItem="Sjf-vc-YK7" firstAttribute="top" secondItem="33U-aU-EWZ" secondAttribute="bottom" constant="23" id="Ab9-GF-qvL"/>
                             <constraint firstItem="0F3-BT-z3E" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="CPo-xV-HhR"/>
+                            <constraint firstItem="2hW-EQ-yL7" firstAttribute="top" secondItem="0F3-BT-z3E" secondAttribute="bottom" constant="49" id="Nb8-fs-TWx"/>
                             <constraint firstItem="jrD-Ne-eg5" firstAttribute="top" secondItem="XpR-OD-OcF" secondAttribute="bottom" constant="79" id="YZF-tS-xHH"/>
                             <constraint firstItem="0F3-BT-z3E" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="34" id="d60-AV-hn0"/>
+                            <constraint firstItem="2hW-EQ-yL7" firstAttribute="centerX" secondItem="0F3-BT-z3E" secondAttribute="centerX" id="dFr-LA-jD5"/>
                             <constraint firstItem="33U-aU-EWZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jbt-MK-CWm"/>
                             <constraint firstItem="Sjf-vc-YK7" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="lim-Tj-O6d"/>
                             <constraint firstItem="33U-aU-EWZ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="166" id="n37-5F-wLH"/>
@@ -65,6 +70,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="2hW-EQ-yL7" id="LIN-hQ-vl3"/>
                         <outlet property="cityName" destination="33U-aU-EWZ" id="Wa5-Jo-Jgo"/>
                         <outlet property="cityNameTextField" destination="0F3-BT-z3E" id="0e7-Ha-hVy"/>
                         <outlet property="humidityLabel" destination="jrD-Ne-eg5" id="DmW-5s-k5d"/>
