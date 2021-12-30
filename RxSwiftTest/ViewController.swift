@@ -38,23 +38,37 @@ class ViewController: UIViewController {
           .throttle(0.5, scheduler: MainScheduler.instance)
          
           
-        search.map { "\(round((($0.main.temp-273.15) * 100) / 100))° C" }
-          .bind(to: tempratureLabel.rx.text)
-          .disposed(by: disposeBag)
-
-        search.map { "\($0.name)" }
-          .bind(to: cityName.rx.text)
-          .disposed(by: disposeBag)
-
-        search.map { "\($0.main.humidity)%" }
-          .bind(to: humidityLabel.rx.text)
-          .disposed(by: disposeBag)
+//        search.map { "\(round((($0.main.temp-273.15) * 100) / 100))° C" }
+//          .bind(to: tempratureLabel.rx.text)
+//          .disposed(by: disposeBag)
+//
+//        search.map { "\($0.name)" }
+//          .bind(to: cityName.rx.text)
+//          .disposed(by: disposeBag)
+//
+//        search.map { "\($0.main.humidity)%" }
+//          .bind(to: humidityLabel.rx.text)
+//          .disposed(by: disposeBag)
+        
+        search.map { [weak self] weather in
+            self?.setUpView(weather: weather)
+            return "\(weather.main.humidity)%"
+        }
+        .bind(to: humidityLabel.rx.text)
+        .disposed(by: disposeBag)
+        
     }
     
     private func setUpView(weather: Weather) {
         self.humidityLabel.text = String(weather.main.humidity)
         self.tempratureLabel.text = String(round(((weather.main.temp-273.15) * 100) / 100))
         self.cityName.text = String(weather.name)
+        
+        guard let firstWeather = weather.weather.first,
+                firstWeather.icon.count > 0 else {
+            imageView.image = nil
+            return
+        }
         
         ApiController.shared.imageForIconId(iconUrlString: weather.weather.first?.iconUrl ?? "")
             .observeOn(MainScheduler.instance)

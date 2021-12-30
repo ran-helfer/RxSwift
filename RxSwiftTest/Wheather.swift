@@ -28,6 +28,6 @@ struct Weather: Decodable {
     let main: WeatherMain
     
     static func someWeather() -> Weather {
-        return Weather(name: "test", weather: [WeatherDescription(main: "clear", description: "clear", icon: "01d")], main: WeatherMain(temp: -5, humidity: -5))
+        return Weather(name: "-", weather: [WeatherDescription(main: "-", description: "-", icon: "")], main: WeatherMain(temp: 0, humidity: 0))
     }
 }
